@@ -1,0 +1,9 @@
+C:\Users\admin\Desktop\server\BeTong\dist\BeTong-win7\BeTong.exe.config
+C:\Users\admin\Desktop\server\BeTong\dist\BeTong-win7\BeTong.exe
+C:\Users\admin\Desktop\server\BeTong\dist\BeTong-win7\BeTong.pdb
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Release\BeTong.csproj.AssemblyReference.cache
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Release\BeTong.Properties.Resources.resources
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Release\BeTong.csproj.GenerateResource.cache
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Release\BeTong.csproj.CoreCompileInputs.cache
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Release\BeTong.exe
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Release\BeTong.pdb

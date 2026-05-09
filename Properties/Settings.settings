@@ -1,0 +1,9 @@
+<Setting Name="RememberMe" Type="System.Boolean" Scope="User">
+  <Value Profile="(Default)">False</Value>
+</Setting>
+<Setting Name="LoginName" Type="System.String" Scope="User">
+  <Value Profile="(Default)"></Value>
+</Setting>
+<Setting Name="Password" Type="System.String" Scope="User">
+  <Value Profile="(Default)"></Value>
+</Setting>

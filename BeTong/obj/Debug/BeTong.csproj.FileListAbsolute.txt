@@ -1,0 +1,13 @@
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Debug\BeTong.csproj.AssemblyReference.cache
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Debug\BeTong.Properties.Resources.resources
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Debug\BeTong.csproj.GenerateResource.cache
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Debug\BeTong.csproj.CoreCompileInputs.cache
+C:\Users\admin\Desktop\server\BeTong\BeTong\bin\Debug\BeTong.exe.config
+C:\Users\admin\Desktop\server\BeTong\BeTong\bin\Debug\BeTong.exe
+C:\Users\admin\Desktop\server\BeTong\BeTong\bin\Debug\BeTong.pdb
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Debug\BeTong.exe
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Debug\BeTong.pdb
+C:\Users\admin\Desktop\server\BeTong\build-check\BeTong.exe.config
+C:\Users\admin\Desktop\server\BeTong\build-check\BeTong.exe
+C:\Users\admin\Desktop\server\BeTong\build-check\BeTong.pdb
+C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Debug\BeTong.exe.config
