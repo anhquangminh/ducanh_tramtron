@@ -1,5 +1,6 @@
-using System.Configuration;
+    using System.Configuration;
 using System.Data.SqlClient;
+using BeTong.Helpers;
 
 namespace BeTong.Data
 {
@@ -10,7 +11,7 @@ namespace BeTong.Data
         public SqlConnectionFactory()
         {
             var settings = ConfigurationManager.ConnectionStrings["DefaultConnection"];
-            if (settings == null || string.IsNullOrWhiteSpace(settings.ConnectionString))
+            if (settings == null || TextHelper.IsNullOrWhiteSpace(settings.ConnectionString))
             {
                 throw new ConfigurationErrorsException("Không tìm thấy connection string DefaultConnection trong App.config.");
             }

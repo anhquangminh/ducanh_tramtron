@@ -2,6 +2,7 @@
 using BeTong.Data;
 using BeTong.Models;
 using BeTong.Services;
+using BeTong.Helpers;
 
 namespace BeTong.Repositories
 {
@@ -16,12 +17,12 @@ namespace BeTong.Repositories
 
         public ApplicationUserInfo GetByLoginName(string loginName, string password)
         {
-            if (string.IsNullOrWhiteSpace(loginName))
+            if (TextHelper.IsNullOrWhiteSpace(loginName))
             {
                 throw new InvalidOperationException("Vui lòng nhập tên đăng nhập.");
             }
 
-            if (string.IsNullOrWhiteSpace(password))
+            if (TextHelper.IsNullOrWhiteSpace(password))
             {
                 throw new InvalidOperationException("Vui lòng nhập mật khẩu.");
             }

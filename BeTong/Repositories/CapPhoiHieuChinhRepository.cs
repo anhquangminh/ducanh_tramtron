@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using BeTong.Data;
 using BeTong.Models;
+using BeTong.Helpers;
 
 namespace BeTong.Repositories
 {
@@ -39,7 +40,7 @@ namespace BeTong.Repositories
         public DataTable GetPage(string groupId, string companyId, string khachHangId, string macId, string congTrinhId, string macHdId, int page, int pageSize, string sortColumn, bool sortDescending, out int totalRows)
         {
             totalRows = 0;
-            
+
             using (var connection = _connectionFactory.Create())
             using (var command = connection.CreateCommand())
             {
@@ -359,7 +360,7 @@ namespace BeTong.Repositories
 
         private static void AppendFilter(ref string where, SqlCommand command, string column, string parameter, string value)
         {
-            if (!string.IsNullOrWhiteSpace(value))
+            if (!TextHelper.IsNullOrWhiteSpace(value))
             {
                 where += " AND " + column + " = " + parameter;
                 command.Parameters.AddWithValue(parameter, value);
@@ -607,8 +608,7 @@ namespace BeTong.Repositories
                         assignments.Add(column + " = @" + column);
                     }
                 }
-
-                command.CommandText = "UPDATE " + MainTable + " SET " + string.Join(", ", assignments) + " WHERE Id = @Id";
+                command.CommandText = "UPDATE " + MainTable + " SET " + string.Join(", ", assignments.ToArray()) + " WHERE Id = @Id";
                 AddEntityParameters(command, entity);
                 command.ExecuteNonQuery();
             }

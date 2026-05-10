@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using BeTong.Models;
 using BeTong.Repositories;
 using BeTong.Services;
+using BeTong.Helpers;
 
 namespace BeTong.Forms
 {
@@ -13,7 +14,7 @@ namespace BeTong.Forms
         private readonly CapPhoiHieuChinhRepository _repository;
         private readonly LookupRepository _lookupRepository;
         private readonly PermissionService _permissionService;
-        private readonly ApprovalService _approvalService;
+        private readonly ApprovalService _approval_service;
         private readonly NotificationService _notificationService;
         private readonly ApplicationUserInfo _user; // changed to ApplicationUserInfo
         private readonly bool _isEdit;
@@ -23,6 +24,7 @@ namespace BeTong.Forms
         private readonly Dictionary<string, TextBox> _texts = new Dictionary<string, TextBox>();
         private readonly Dictionary<string, NumericUpDown> _numbers = new Dictionary<string, NumericUpDown>();
         private readonly Dictionary<string, ComboBox> _combos = new Dictionary<string, ComboBox>();
+        private readonly Dictionary<string, int> _decimals = new Dictionary<string, int>(); // store requested decimals per field
         private DateTimePicker _ngayPicker;
         private DateTimePicker _ngayTaoPicker;
 
@@ -37,18 +39,23 @@ namespace BeTong.Forms
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _lookupRepository = lookupRepository ?? throw new ArgumentNullException(nameof(lookupRepository));
+            _approval_service = approvalService ?? throw new ArgumentNullException(nameof(approvalService));
             _permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
-            _approvalService = approvalService ?? throw new ArgumentNullException(nameof(approvalService));
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             _user = user ?? throw new ArgumentNullException(nameof(user));
-            _isEdit = !string.IsNullOrWhiteSpace(id);
+            _isEdit = !(id == null || id.Trim().Length == 0);
             _entity = _isEdit ? _repository.GetById(id) : new CapPhoiHieuChinh();
             _baseTime = DateTime.Now;
 
             Text = _isEdit ? "Cập nhật cấp phối hiệu chỉnh" : "Thêm cấp phối hiệu chỉnh";
             StartPosition = FormStartPosition.CenterParent;
-            Size = new Size(760, 320);
-            MinimumSize = new Size(680, 280);
+
+            // Tăng cỡ chữ toàn cục cho form để dễ đọc (tăng lớn hơn)
+            Font = new Font("Segoe UI", 14F, FontStyle.Regular);
+
+            // Tăng kích thước form để phù hợp với font lớn hơn
+            Size = new Size(980, 620);
+            MinimumSize = new Size(860, 520);
 
             BuildUi();
             LoadLookups();
@@ -63,27 +70,76 @@ namespace BeTong.Forms
                 RowCount = 2,
                 ColumnCount = 1
             };
-            root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
 
-            var tabs = new TabControl { Dock = DockStyle.Fill };
-            tabs.TabPages.Add(BuildNumbersPage("Hiệu chỉnh", new[] { "CPSXXM", "CPSXCat", "CPSXDa", "CPSXNuoc", "CPSXPG", "CPSXTroBay" }, 0));
+            root.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            // tăng chiều cao footer
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 70F));
+
+            var tabs = new TabControl
+            {
+                Dock = DockStyle.Fill,
+                Font = this.Font
+            };
+
+            // "Hiệu chỉnh" tab: 6 trường -> hiển thị 2 dòng x 3 cột
+            tabs.TabPages.Add(
+                BuildNumbersPage(
+                    "Hiệu chỉnh",
+                    new[]
+                    {
+                        "CPSXXM",
+                        "CPSXCat",
+                        "CPSXDa",
+                        "CPSXNuoc",
+                        "CPSXPG",
+                        "CPSXTroBay"
+                    },
+                    3));
+
+            // Nếu cần thêm tab "Thông tin chung",
+            //tabs.TabPages.Add(BuildGeneralPage());
 
             var buttons = new FlowLayoutPanel
             {
-                Dock = DockStyle.Fill,
+                Dock = DockStyle.Right,
                 FlowDirection = FlowDirection.RightToLeft,
-                Padding = new Padding(8)
+                Padding = new Padding(8),
+                AutoSize = true,
+                WrapContents = false
             };
-            var save = new Button { Text = "Lưu", Width = 100, Height = 30 };
+
+            var save = new Button
+            {
+                Text = "Lưu",
+                Width = 140,
+                Height = 44,
+                Font = this.Font,
+                Margin = new Padding(6)
+            };
+
             save.Click += Save_Click;
-            var cancel = new Button { Text = "Hủy", Width = 100, Height = 30 };
-            cancel.Click += delegate { DialogResult = DialogResult.Cancel; Close(); };
+
+            var cancel = new Button
+            {
+                Text = "Hủy",
+                Width = 140,
+                Height = 44,
+                Font = this.Font,
+                Margin = new Padding(6)
+            };
+
+            cancel.Click += delegate
+            {
+                DialogResult = DialogResult.Cancel;
+                Close();
+            };
+
             buttons.Controls.Add(save);
             buttons.Controls.Add(cancel);
 
             root.Controls.Add(tabs, 0, 0);
             root.Controls.Add(buttons, 0, 1);
+
             Controls.Add(root);
         }
 
@@ -97,9 +153,9 @@ namespace BeTong.Forms
                 ColumnCount = 4,
                 Padding = new Padding(12)
             };
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 145));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160));
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 145));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160));
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
 
             AddCombo(panel, "CompanyId", "Chi nhánh");
@@ -135,33 +191,98 @@ namespace BeTong.Forms
             page.Controls.Add(scroll);
             return page;
         }
+
         private TabPage BuildNumbersPage(string title, string[] fields)
         {
             return BuildNumbersPage(title, fields, 3);
         }
 
+        // Tạo layout 2 hàng x 3 cột, mỗi ô có label ở trên và NumericUpDown bên dưới (font lớn)
         private TabPage BuildNumbersPage(string title, string[] fields, int decimals)
         {
             var page = new TabPage(title);
-            var panel = new TableLayoutPanel
+
+            var grid = new TableLayoutPanel
             {
                 Dock = DockStyle.Top,
                 AutoSize = true,
-                ColumnCount = 4,
-                Padding = new Padding(12)
+                ColumnCount = 3,
+                RowCount = 2,
+                Padding = new Padding(12),
             };
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 145));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 145));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
 
-            foreach (var field in fields)
+            // 3 cột đều nhau
+            grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33F));
+            grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33F));
+            grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.34F));
+
+            // Hai hàng, cho mỗi hàng một chiều cao phù hợp
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 90F));
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 90F));
+
+            int index = 0;
+            for (int r = 0; r < 2; r++)
             {
-                AddNumber(panel, field, field, decimals);
+                for (int c = 0; c < 3; c++)
+                {
+                    if (index >= fields.Length) break;
+
+                    string fieldName = fields[index];
+                    // Tạo panel cho ô (để label + control xếp dọc)
+                    var cell = new Panel
+                    {
+                        Dock = DockStyle.Fill,
+                        Padding = new Padding(6)
+                    };
+
+                    var lbl = new Label
+                    {
+                        Text = fieldName,
+                        Dock = DockStyle.Top,
+                        Height = 28,
+                        TextAlign = ContentAlignment.MiddleLeft,
+                        Font = new Font(this.Font.FontFamily, this.Font.Size, FontStyle.Regular)
+                    };
+
+                    var number = new NumericUpDown
+                    {
+                        DecimalPlaces = decimals,
+                        Maximum = 1000000000,
+                        Minimum = -1000000000,
+                        ThousandsSeparator = false,
+                        Dock = DockStyle.Top,
+                        Height = 42,
+                        Width = 220,
+                        Font = new Font(this.Font.FontFamily, this.Font.Size, FontStyle.Regular)
+                    };
+
+                    // lưu decimals để dùng khi bind/show
+                    _decimals[fieldName] = decimals;
+
+                    // đảm bảo value 0 nếu chưa có
+                    number.Value = 0;
+
+                    // thêm xử lý tự động ẩn phần thập phân nếu là số nguyên
+                    number.ValueChanged += (s, e) => UpdateDecimalPlaces(number, decimals);
+                    number.Leave += (s, e) => UpdateDecimalPlaces(number, decimals);
+                    // gọi một lần để khởi tạo hiển thị đúng
+                    UpdateDecimalPlaces(number, decimals);
+
+                    // thêm vào dictionary để bind/save
+                    _numbers[fieldName] = number;
+
+                    // thêm controls vào cell: label trên, numeric dưới
+                    cell.Controls.Add(number);
+                    cell.Controls.Add(lbl);
+
+                    grid.Controls.Add(cell, c, r);
+
+                    index++;
+                }
             }
 
             var scroll = new Panel { Dock = DockStyle.Fill, AutoScroll = true };
-            scroll.Controls.Add(panel);
+            scroll.Controls.Add(grid);
             page.Controls.Add(scroll);
             return page;
         }
@@ -169,7 +290,7 @@ namespace BeTong.Forms
         private void AddText(TableLayoutPanel panel, string name, string label)
         {
             AddLabel(panel, label);
-            var text = new TextBox { Dock = DockStyle.Fill, Width = 260 };
+            var text = new TextBox { Dock = DockStyle.Fill, Width = 320, Font = this.Font };
             _texts[name] = text;
             panel.Controls.Add(text);
         }
@@ -177,7 +298,7 @@ namespace BeTong.Forms
         private void AddCombo(TableLayoutPanel panel, string name, string label)
         {
             AddLabel(panel, label);
-            var combo = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Width = 260 };
+            var combo = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Width = 320, Font = this.Font };
             _combos[name] = combo;
             panel.Controls.Add(combo);
         }
@@ -185,7 +306,7 @@ namespace BeTong.Forms
         private void AddDate(TableLayoutPanel panel, string name, string label)
         {
             AddLabel(panel, label);
-            var picker = new DateTimePicker { Dock = DockStyle.Fill, Format = DateTimePickerFormat.Short };
+            var picker = new DateTimePicker { Dock = DockStyle.Fill, Format = DateTimePickerFormat.Short, Font = this.Font };
             if (name == "Ngay") _ngayPicker = picker;
             if (name == "NgayTao") _ngayTaoPicker = picker;
             panel.Controls.Add(picker);
@@ -199,11 +320,58 @@ namespace BeTong.Forms
                 Maximum = 1000000000,
                 Minimum = -1000000000,
                 DecimalPlaces = decimals,
-                ThousandsSeparator = true,
-                Width = 260
+                ThousandsSeparator = false,
+                Width = 320,
+                Font = this.Font
             };
+
+            // lưu decimals để dùng khi bind/show
+            _decimals[name] = decimals;
+
+            // tự động cập nhật hiển thị phần thập phân
+            number.ValueChanged += (s, e) => UpdateDecimalPlaces(number, decimals);
+            number.Leave += (s, e) => UpdateDecimalPlaces(number, decimals);
+            UpdateDecimalPlaces(number, decimals);
+
             _numbers[name] = number;
             panel.Controls.Add(number);
+        }
+
+        private void UpdateDecimalPlaces(NumericUpDown ctrl, int maxDecimals)
+        {
+            if (ctrl == null) return;
+            try
+            {
+                decimal val = ctrl.Value;
+                decimal trunc = Math.Truncate(val);
+                if (val == trunc)
+                {
+                    // nếu giá trị là số nguyên, hiển thị không có phần thập phân
+                    if (ctrl.DecimalPlaces != 0) ctrl.DecimalPlaces = 0;
+                }
+                else
+                {
+                    // nếu có phần thập phân, thử tìm số chữ số thập phân tối thiểu cần hiển thị (<= maxDecimals)
+                    decimal frac = Math.Abs(val - trunc);
+                    int needed = 0;
+                    decimal scaled = frac;
+                    for (int i = 1; i <= maxDecimals; i++)
+                    {
+                        scaled = Math.Round(frac * (decimal)Math.Pow(10, i));
+                        if (scaled == Math.Truncate(scaled))
+                        {
+                            needed = i;
+                            break;
+                        }
+                    }
+                    if (needed == 0) needed = maxDecimals;
+                    if (ctrl.DecimalPlaces != needed) ctrl.DecimalPlaces = needed;
+                }
+            }
+            catch
+            {
+                // không để lỗi làm crash UI
+            }
         }
 
         private static void AddLabel(TableLayoutPanel panel, string text)
@@ -215,6 +383,7 @@ namespace BeTong.Forms
                 TextAlign = ContentAlignment.MiddleLeft,
                 AutoSize = true,
                 Padding = new Padding(0, 5, 4, 5)
+                // Font is inherited from parent form, set on form constructor
             });
         }
 
@@ -318,8 +487,8 @@ namespace BeTong.Forms
                     _permissionService.EnsureUserHasApprovalPermission(_entity.CompanyId, ApprovalService.PermissionAdd);
                     _repository.CheckDuplicate(_entity, false);
 
-                    var first = _approvalService.GetFirstApprovalStep(_entity.CompanyId, ApprovalService.PermissionAdd);
-                    var last = _approvalService.GetLastApprovalStep(_entity.CompanyId, ApprovalService.PermissionAdd);
+                    var first = _approval_service.GetFirstApprovalStep(_entity.CompanyId, ApprovalService.PermissionAdd);
+                    var last = _approval_service.GetLastApprovalStep(_entity.CompanyId, ApprovalService.PermissionAdd);
                     _entity.Id = Guid.NewGuid().ToString();
                     _entity.IDCapPhoi = _entity.Id;
                     _entity.IsActive = 0;
@@ -348,7 +517,7 @@ namespace BeTong.Forms
             _entity.GroupId = _user.GroupId;
             _entity.CreateBy = _user.UserId;
             _entity.CreateAt = DateTime.Now;
-            if (string.IsNullOrWhiteSpace(_entity.ApprovalUserId))
+            if (TextHelper.IsNullOrWhiteSpace(_entity.ApprovalUserId))
             {
                 _entity.ApprovalUserId = "";
             }
@@ -378,9 +547,10 @@ namespace BeTong.Forms
                 throw new InvalidOperationException("Vui lòng chọn đầy đủ vật liệu/thông số cấp phối.");
             }
         }
+
         private static void Require(string value, string label)
         {
-            if (string.IsNullOrWhiteSpace(value))
+            if (TextHelper.IsNullOrWhiteSpace(value))
             {
                 throw new InvalidOperationException("Vui lòng nhập/chọn " + label + ".");
             }
@@ -421,6 +591,10 @@ namespace BeTong.Forms
                 if ((decimal)value > control.Maximum) value = (double)control.Maximum;
                 if ((decimal)value < control.Minimum) value = (double)control.Minimum;
                 control.Value = (decimal)value;
+
+                // sau khi gán giá trị, cập nhật số chữ số thập phân hiển thị dựa trên giá trị
+                int maxDecimals = _decimals.ContainsKey(name) ? _decimals[name] : control.DecimalPlaces;
+                UpdateDecimalPlaces(control, maxDecimals);
             }
         }
 

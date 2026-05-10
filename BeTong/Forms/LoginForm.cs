@@ -216,7 +216,7 @@ namespace BeTong.Forms
                 LoggedInUser = _userRepository.GetByLoginName(_loginNameTextBox.Text, _passwordTextBox.Text);
 
                 // Kiểm tra nếu GroupId không tồn tại
-                if (string.IsNullOrWhiteSpace(LoggedInUser.GroupId))
+                if (LoggedInUser.GroupId == null || LoggedInUser.GroupId.Trim().Length == 0)
                 {
                     throw new InvalidOperationException("Người dùng này chưa được gán GroupId.");
                 }

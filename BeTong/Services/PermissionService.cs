@@ -36,7 +36,7 @@ namespace BeTong.Services
         /// </summary>
         private void EnsureUserHasApprovalPermission(string userId, string companyId, string approvalId)
         {
-            if (string.IsNullOrWhiteSpace(userId))
+            if (userId == null || userId.Trim().Length == 0)
             {
                 throw new InvalidOperationException("UserId không hợp lệ.");
             }

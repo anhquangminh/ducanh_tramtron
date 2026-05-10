@@ -27,7 +27,7 @@ namespace BeTong.Helpers
                 var s = new LoginSettings();
                 foreach (var line in lines)
                 {
-                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    if (line == null || line.Trim().Length == 0) continue;
                     var idx = line.IndexOf('=');
                     if (idx <= 0) continue;
                     var key = line.Substring(0, idx).Trim();

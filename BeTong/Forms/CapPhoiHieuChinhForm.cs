@@ -32,6 +32,9 @@ namespace BeTong.Forms
         private string _sortColumn = "CreateAt";
         private bool _sortDescending = true;
 
+        // Khi form được mở lần đầu tiên trong phiên chạy ứng dụng, mở full màn hình.
+        private static bool _openedOnce;
+
         private static readonly GridColumnDefinition[] GridColumns =
         {
             new GridColumnDefinition("RowNumber", "No."),
@@ -117,6 +120,13 @@ namespace BeTong.Forms
             StartPosition = FormStartPosition.CenterScreen;
             Size = new Size(1280, 760);
             MinimumSize = new Size(1100, 650);
+
+            // Nếu form chưa được mở lần nào trong phiên này thì mở ở trạng thái full màn hình
+            if (!_openedOnce)
+            {
+                WindowState = FormWindowState.Maximized;
+                _openedOnce = true;
+            }
 
             BuildUi();
             LoadLookups();
@@ -429,7 +439,7 @@ namespace BeTong.Forms
                 }
 
                 var permissionId = ApprovalService.PermissionForState(entity.IsActive);
-                if (string.IsNullOrWhiteSpace(permissionId))
+                if (permissionId == null || permissionId.Trim().Length == 0)
                 {
                     throw new InvalidOperationException("Trạng thái hiện tại không hỗ trợ duyệt.");
                 }
@@ -494,7 +504,7 @@ namespace BeTong.Forms
         private void Grid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             var column = _grid.Columns[e.ColumnIndex];
-            if (column == null || string.IsNullOrWhiteSpace(column.DataPropertyName))
+            if (column == null || string.IsNullOrEmpty(column.DataPropertyName) || column.DataPropertyName.Trim().Length == 0)
             {
                 return;
             }
