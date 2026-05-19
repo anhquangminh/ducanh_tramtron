@@ -10,4 +10,3 @@ C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Release\BeTong.pdb
 C:\Users\admin\Desktop\server\BeTong\BeTong\bin\Release\BeTong.exe.config
 C:\Users\admin\Desktop\server\BeTong\BeTong\bin\Release\BeTong.exe
 C:\Users\admin\Desktop\server\BeTong\BeTong\bin\Release\BeTong.pdb
-C:\Users\admin\Desktop\server\BeTong\BeTong\obj\Release\BeTong.exe.config

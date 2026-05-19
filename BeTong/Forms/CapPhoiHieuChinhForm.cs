@@ -32,9 +32,6 @@ namespace BeTong.Forms
         private string _sortColumn = "CreateAt";
         private bool _sortDescending = true;
 
-        // Khi form được mở lần đầu tiên trong phiên chạy ứng dụng, mở full màn hình.
-        private static bool _openedOnce;
-
         private static readonly GridColumnDefinition[] GridColumns =
         {
             new GridColumnDefinition("RowNumber", "No."),
@@ -120,19 +117,26 @@ namespace BeTong.Forms
             StartPosition = FormStartPosition.CenterScreen;
             Size = new Size(1280, 760);
             MinimumSize = new Size(1100, 650);
-
-            // Nếu form chưa được mở lần nào trong phiên này thì mở ở trạng thái full màn hình
-            if (!_openedOnce)
-            {
-                WindowState = FormWindowState.Maximized;
-                _openedOnce = true;
-            }
+            Font = new Font("Segoe UI", 12F, FontStyle.Regular);
+            WindowState = FormWindowState.Maximized;
+            ApplyApplicationIcon();
 
             BuildUi();
             LoadLookups();
             LoadData();
         }
 
+        private void ApplyApplicationIcon()
+        {
+            try
+            {
+                Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            }
+            catch
+            {
+                // Keep the default form icon if the executable icon cannot be loaded.
+            }
+        }
         private void BuildUi()
         {
             var root = new TableLayoutPanel
@@ -141,9 +145,9 @@ namespace BeTong.Forms
                 RowCount = 3,
                 ColumnCount = 1
             };
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 92));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 146));
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 46));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 78));
 
             var top = new TableLayoutPanel
             {
@@ -152,6 +156,8 @@ namespace BeTong.Forms
                 RowCount = 2,
                 Padding = new Padding(8)
             };
+            top.RowStyles.Add(new RowStyle(SizeType.Absolute, 54));
+            top.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             for (int i = 0; i < 10; i++)
             {
                 top.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10));
@@ -167,7 +173,7 @@ namespace BeTong.Forms
             {
                 Dock = DockStyle.Fill,
                 FlowDirection = FlowDirection.LeftToRight,
-                Padding = new Padding(8, 0, 8, 4)
+                Padding = new Padding(8, 6, 8, 6)
             };
             AddButton(actions, "Tìm kiếm", Search_Click);
             AddButton(actions, "Làm mới", Refresh_Click);
@@ -189,6 +195,16 @@ namespace BeTong.Forms
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells,
                 ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText
             };
+            _grid.EnableHeadersVisualStyles = false;
+            _grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            _grid.ColumnHeadersHeight = 48;
+            _grid.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            _grid.RowTemplate.Height = 38;
+            _grid.DefaultCellStyle.Font = Font;
+            _grid.DefaultCellStyle.Padding = new Padding(2, 5, 2, 5);
+            _grid.ColumnHeadersDefaultCellStyle.Font = new Font(Font, FontStyle.Bold);
+            _grid.ColumnHeadersDefaultCellStyle.Padding = new Padding(2, 7, 2, 7);
+            _grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             ConfigureGridColumns();
             _grid.ColumnHeaderMouseClick += Grid_ColumnHeaderMouseClick;
             _grid.CellDoubleClick += delegate { EditSelected(); };
@@ -197,16 +213,16 @@ namespace BeTong.Forms
             {
                 Dock = DockStyle.Fill,
                 FlowDirection = FlowDirection.RightToLeft,
-                Padding = new Padding(8)
+                Padding = new Padding(8, 10, 8, 8)
             };
             AddButton(bottom, "Sau", Next_Click);
             AddButton(bottom, "Trước", Prev_Click);
-            _pageLabel = new Label { Width = 180, Height = 28, TextAlign = ContentAlignment.MiddleCenter };
+            _pageLabel = new Label { Width = 260, Height = 44, TextAlign = ContentAlignment.MiddleCenter, Font = Font, AutoSize = false };
             bottom.Controls.Add(_pageLabel);
-            _pageSize = new NumericUpDown { Minimum = 10, Maximum = 500, Value = 50, Width = 70 };
+            _pageSize = new NumericUpDown { Minimum = 10, Maximum = 500, Value = 50, Width = 100, Height = 44, Font = Font };
             _pageSize.ValueChanged += delegate { _page = 1; LoadData(); };
             bottom.Controls.Add(_pageSize);
-            bottom.Controls.Add(new Label { Text = "Số dòng", Width = 60, Height = 28, TextAlign = ContentAlignment.MiddleLeft });
+            bottom.Controls.Add(new Label { Text = "S\u1ed1 d\u00f2ng", Width = 100, Height = 44, TextAlign = ContentAlignment.MiddleLeft, Font = Font, AutoSize = false });
 
             root.Controls.Add(top, 0, 0);
             root.Controls.Add(_grid, 0, 1);
@@ -216,15 +232,15 @@ namespace BeTong.Forms
 
         private ComboBox AddFilter(TableLayoutPanel top, string label, int column)
         {
-            top.Controls.Add(new Label { Text = label, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft }, column, 0);
-            var combo = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList };
+            top.Controls.Add(new Label { Text = label, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft, Font = Font, AutoSize = false, Padding = new Padding(0, 0, 0, 4) }, column, 0);
+            var combo = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Font = Font, Height = 42, IntegralHeight = false };
             top.Controls.Add(combo, column + 1, 0);
             return combo;
         }
 
-        private static void AddButton(FlowLayoutPanel panel, string text, EventHandler handler)
+        private void AddButton(FlowLayoutPanel panel, string text, EventHandler handler)
         {
-            var button = new Button { Text = text, Width = 92, Height = 30 };
+            var button = new Button { Text = text, Width = 126, Height = 44, Font = Font, Margin = new Padding(4), TextAlign = ContentAlignment.MiddleCenter };
             button.Click += handler;
             panel.Controls.Add(button);
         }

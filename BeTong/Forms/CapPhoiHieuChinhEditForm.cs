@@ -51,11 +51,11 @@ namespace BeTong.Forms
             StartPosition = FormStartPosition.CenterParent;
 
             // Tăng cỡ chữ toàn cục cho form để dễ đọc (tăng lớn hơn)
-            Font = new Font("Segoe UI", 14F, FontStyle.Regular);
+            Font = new Font("Segoe UI", 16F, FontStyle.Regular);
 
             // Tăng kích thước form để phù hợp với font lớn hơn
-            Size = new Size(980, 620);
-            MinimumSize = new Size(860, 520);
+            Size = new Size(1120, 720);
+            MinimumSize = new Size(980, 620);
 
             BuildUi();
             LoadLookups();
@@ -73,7 +73,7 @@ namespace BeTong.Forms
 
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             // tăng chiều cao footer
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 70F));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 82F));
 
             var tabs = new TabControl
             {
@@ -111,8 +111,8 @@ namespace BeTong.Forms
             var save = new Button
             {
                 Text = "Lưu",
-                Width = 140,
-                Height = 44,
+                Width = 160,
+                Height = 52,
                 Font = this.Font,
                 Margin = new Padding(6)
             };
@@ -122,8 +122,8 @@ namespace BeTong.Forms
             var cancel = new Button
             {
                 Text = "Hủy",
-                Width = 140,
-                Height = 44,
+                Width = 160,
+                Height = 52,
                 Font = this.Font,
                 Margin = new Padding(6)
             };
@@ -217,8 +217,8 @@ namespace BeTong.Forms
             grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.34F));
 
             // Hai hàng, cho mỗi hàng một chiều cao phù hợp
-            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 90F));
-            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 90F));
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 112F));
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 112F));
 
             int index = 0;
             for (int r = 0; r < 2; r++)
@@ -239,7 +239,7 @@ namespace BeTong.Forms
                     {
                         Text = fieldName,
                         Dock = DockStyle.Top,
-                        Height = 28,
+                        Height = 34,
                         TextAlign = ContentAlignment.MiddleLeft,
                         Font = new Font(this.Font.FontFamily, this.Font.Size, FontStyle.Regular)
                     };
@@ -251,8 +251,8 @@ namespace BeTong.Forms
                         Minimum = -1000000000,
                         ThousandsSeparator = false,
                         Dock = DockStyle.Top,
-                        Height = 42,
-                        Width = 220,
+                        Height = 52,
+                        Width = 260,
                         Font = new Font(this.Font.FontFamily, this.Font.Size, FontStyle.Regular)
                     };
 
@@ -263,7 +263,6 @@ namespace BeTong.Forms
                     number.Value = 0;
 
                     // thêm xử lý tự động ẩn phần thập phân nếu là số nguyên
-                    number.ValueChanged += (s, e) => UpdateDecimalPlaces(number, decimals);
                     number.Leave += (s, e) => UpdateDecimalPlaces(number, decimals);
                     // gọi một lần để khởi tạo hiển thị đúng
                     UpdateDecimalPlaces(number, decimals);
@@ -329,7 +328,6 @@ namespace BeTong.Forms
             _decimals[name] = decimals;
 
             // tự động cập nhật hiển thị phần thập phân
-            number.ValueChanged += (s, e) => UpdateDecimalPlaces(number, decimals);
             number.Leave += (s, e) => UpdateDecimalPlaces(number, decimals);
             UpdateDecimalPlaces(number, decimals);
 
