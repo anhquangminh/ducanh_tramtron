@@ -66,6 +66,9 @@
     <Compile Include="Forms\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\UiSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,6 +77,7 @@
     </Compile>
     <Compile Include="Helpers\LoginSettings.cs" />
     <Compile Include="Helpers\TextHelper.cs" />
+    <Compile Include="Helpers\UiSettings.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -7,7 +7,11 @@
       "RelativeMoniker": "D:0:0:{B0FF365A-41C6-4AAC-B899-90214C4594D8}|BeTong\\BeTong.csproj|solutionrelative:betong\\forms\\capphoihieuchinhform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B0FF365A-41C6-4AAC-B899-90214C4594D8}|BeTong\\BeTong.csproj|c:\\users\\admin\\desktop\\server\\betong\\betong\\forms\\capphoihieuchinhform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{B0FF365A-41C6-4AAC-B899-90214C4594D8}|BeTong\\BeTong.csproj|c:\\users\\admin\\desktop\\server\\betong\\betong\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{B0FF365A-41C6-4AAC-B899-90214C4594D8}|BeTong\\BeTong.csproj|solutionrelative:betong\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B0FF365A-41C6-4AAC-B899-90214C4594D8}|BeTong\\BeTong.csproj|C:\\Users\\admin\\Desktop\\server\\BeTong\\betong\\forms\\capphoihieuchinhform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{B0FF365A-41C6-4AAC-B899-90214C4594D8}|BeTong\\BeTong.csproj|solutionrelative:betong\\forms\\capphoihieuchinhform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
@@ -15,7 +19,7 @@
       "RelativeMoniker": "D:0:0:{B0FF365A-41C6-4AAC-B899-90214C4594D8}|BeTong\\BeTong.csproj|solutionrelative:betong\\forms\\capphoihieuchinheditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B0FF365A-41C6-4AAC-B899-90214C4594D8}|BeTong\\BeTong.csproj|c:\\users\\admin\\desktop\\server\\betong\\betong\\forms\\capphoihieuchinheditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{B0FF365A-41C6-4AAC-B899-90214C4594D8}|BeTong\\BeTong.csproj|C:\\Users\\admin\\Desktop\\server\\BeTong\\betong\\forms\\capphoihieuchinheditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{B0FF365A-41C6-4AAC-B899-90214C4594D8}|BeTong\\BeTong.csproj|solutionrelative:betong\\forms\\capphoihieuchinheditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
@@ -30,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -43,6 +47,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "App.config",
+              "DocumentMoniker": "C:\\Users\\admin\\Desktop\\server\\BeTong\\BeTong\\App.config",
+              "RelativeDocumentMoniker": "BeTong\\App.config",
+              "ToolTip": "C:\\Users\\admin\\Desktop\\server\\BeTong\\BeTong\\App.config",
+              "RelativeToolTip": "BeTong\\App.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2026-05-21T01:18:26.526Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "CapPhoiHieuChinhForm.cs [Design]",
               "DocumentMoniker": "C:\\Users\\admin\\Desktop\\server\\BeTong\\BeTong\\Forms\\CapPhoiHieuChinhForm.cs",
               "RelativeDocumentMoniker": "BeTong\\Forms\\CapPhoiHieuChinhForm.cs",
@@ -54,15 +71,14 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "CapPhoiHieuChinhEditForm.cs [Design]",
               "DocumentMoniker": "C:\\Users\\admin\\Desktop\\server\\BeTong\\BeTong\\Forms\\CapPhoiHieuChinhEditForm.cs",
               "RelativeDocumentMoniker": "BeTong\\Forms\\CapPhoiHieuChinhEditForm.cs",
               "ToolTip": "C:\\Users\\admin\\Desktop\\server\\BeTong\\BeTong\\Forms\\CapPhoiHieuChinhEditForm.cs [Design]",
               "RelativeToolTip": "BeTong\\Forms\\CapPhoiHieuChinhEditForm.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-14T02:35:23.641Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2026-05-14T02:35:23.641Z"
             },
             {
               "$type": "Document",
@@ -72,14 +88,14 @@
               "RelativeDocumentMoniker": "BeTong\\Forms\\CapPhoiHieuChinhForm.cs",
               "ToolTip": "C:\\Users\\admin\\Desktop\\server\\BeTong\\BeTong\\Forms\\CapPhoiHieuChinhForm.cs",
               "RelativeToolTip": "BeTong\\Forms\\CapPhoiHieuChinhForm.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAlAAAAAAAAAA==",
+              "ViewState": "AgIAAJ4AAAAAAAAAAAAwwA8AAABAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-10T08:51:49.22Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "CapPhoiHieuChinhEditForm.cs",
               "DocumentMoniker": "C:\\Users\\admin\\Desktop\\server\\BeTong\\BeTong\\Forms\\CapPhoiHieuChinhEditForm.cs",
               "RelativeDocumentMoniker": "BeTong\\Forms\\CapPhoiHieuChinhEditForm.cs",
@@ -87,12 +103,11 @@
               "RelativeToolTip": "BeTong\\Forms\\CapPhoiHieuChinhEditForm.cs",
               "ViewState": "AgIAAN8AAAAAAAAAAAD4v+UAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-10T08:59:44.223Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-10T08:59:44.223Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\admin\\Desktop\\server\\BeTong\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",

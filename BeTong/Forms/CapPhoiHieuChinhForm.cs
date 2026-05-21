@@ -6,6 +6,7 @@ using BeTong.Data;
 using BeTong.Models;
 using BeTong.Repositories;
 using BeTong.Services;
+using BeTong.Helpers;
 
 namespace BeTong.Forms
 {
@@ -18,6 +19,7 @@ namespace BeTong.Forms
         private readonly ApprovalService _approvalService;
         private readonly NotificationService _notificationService;
         private readonly ApplicationUserInfo _user;
+        private UiSettings _uiSettings;
 
         private DataGridView _grid;
         private ComboBox _companyFilter;
@@ -112,13 +114,13 @@ namespace BeTong.Forms
             _approvalService = new ApprovalService(_connectionFactory);
             _notificationService = new NotificationService(_connectionFactory);
             _user = CurrentUserContext.CurrentUser;
+            _uiSettings = UiSettings.Load();
 
-            Text = "Danh sách cấp phối hiệu chỉnh";
+            Text = "Danh s\u00e1ch c\u1ea5p ph\u1ed1i hi\u1ec7u ch\u1ec9nh";
             StartPosition = FormStartPosition.CenterScreen;
-            Size = new Size(1280, 760);
-            MinimumSize = new Size(1100, 650);
-            Font = new Font("Segoe UI", 12F, FontStyle.Regular);
-            WindowState = FormWindowState.Maximized;
+            MinimumSize = new Size(200, 520);
+            Font = new Font("Segoe UI", _uiSettings.FontSize, FontStyle.Regular);
+            ApplyStartupBounds();
             ApplyApplicationIcon();
 
             BuildUi();
@@ -142,12 +144,15 @@ namespace BeTong.Forms
             var root = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                RowCount = 3,
+                RowCount = 4,
                 ColumnCount = 1
             };
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 146));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, Scale(42)));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, Scale(146)));
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 78));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, Scale(78)));
+
+            var menu = BuildMenu();
 
             var top = new TableLayoutPanel
             {
@@ -156,7 +161,7 @@ namespace BeTong.Forms
                 RowCount = 2,
                 Padding = new Padding(8)
             };
-            top.RowStyles.Add(new RowStyle(SizeType.Absolute, 54));
+            top.RowStyles.Add(new RowStyle(SizeType.Absolute, Scale(54)));
             top.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             for (int i = 0; i < 10; i++)
             {
@@ -179,7 +184,6 @@ namespace BeTong.Forms
             AddButton(actions, "Làm mới", Refresh_Click);
             AddButton(actions, "Sửa", Edit_Click);
             AddButton(actions, "Lịch sử", History_Click);
-            AddButton(actions, "Đăng xuất", Logout_Click);
             top.SetColumnSpan(actions, 10);
             top.Controls.Add(actions, 0, 1);
 
@@ -197,13 +201,13 @@ namespace BeTong.Forms
             };
             _grid.EnableHeadersVisualStyles = false;
             _grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            _grid.ColumnHeadersHeight = 48;
+            _grid.ColumnHeadersHeight = Scale(48);
             _grid.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            _grid.RowTemplate.Height = 38;
+            _grid.RowTemplate.Height = Scale(38);
             _grid.DefaultCellStyle.Font = Font;
-            _grid.DefaultCellStyle.Padding = new Padding(2, 5, 2, 5);
+            _grid.DefaultCellStyle.Padding = new Padding(2, Scale(5), 2, Scale(5));
             _grid.ColumnHeadersDefaultCellStyle.Font = new Font(Font, FontStyle.Bold);
-            _grid.ColumnHeadersDefaultCellStyle.Padding = new Padding(2, 7, 2, 7);
+            _grid.ColumnHeadersDefaultCellStyle.Padding = new Padding(2, Scale(7), 2, Scale(7));
             _grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             ConfigureGridColumns();
             _grid.ColumnHeaderMouseClick += Grid_ColumnHeaderMouseClick;
@@ -217,30 +221,204 @@ namespace BeTong.Forms
             };
             AddButton(bottom, "Sau", Next_Click);
             AddButton(bottom, "Trước", Prev_Click);
-            _pageLabel = new Label { Width = 260, Height = 44, TextAlign = ContentAlignment.MiddleCenter, Font = Font, AutoSize = false };
+            _pageLabel = new Label { Width = Scale(260), Height = Scale(44), TextAlign = ContentAlignment.MiddleCenter, Font = Font, AutoSize = false };
             bottom.Controls.Add(_pageLabel);
-            _pageSize = new NumericUpDown { Minimum = 10, Maximum = 500, Value = 50, Width = 100, Height = 44, Font = Font };
+            _pageSize = new NumericUpDown { Minimum = 10, Maximum = 500, Value = 50, Width = Scale(100), Height = Scale(44), Font = Font };
             _pageSize.ValueChanged += delegate { _page = 1; LoadData(); };
             bottom.Controls.Add(_pageSize);
-            bottom.Controls.Add(new Label { Text = "S\u1ed1 d\u00f2ng", Width = 100, Height = 44, TextAlign = ContentAlignment.MiddleLeft, Font = Font, AutoSize = false });
+            bottom.Controls.Add(new Label { Text = "S\u1ed1 d\u00f2ng", Width = Scale(100), Height = Scale(44), TextAlign = ContentAlignment.MiddleLeft, Font = Font, AutoSize = false });
 
-            root.Controls.Add(top, 0, 0);
-            root.Controls.Add(_grid, 0, 1);
-            root.Controls.Add(bottom, 0, 2);
+            root.Controls.Add(menu, 0, 0);
+            root.Controls.Add(top, 0, 1);
+            root.Controls.Add(_grid, 0, 2);
+            root.Controls.Add(bottom, 0, 3);
             Controls.Add(root);
         }
 
+        private MenuStrip BuildMenu()
+        {
+            var menu = new MenuStrip
+            {
+                Dock = DockStyle.Fill,
+                Font = new Font("Segoe UI", Font.Size, FontStyle.Bold),
+                AutoSize = false,
+                Height = Scale(42),
+                BackColor = Color.FromArgb(35, 48, 68),
+                ForeColor = Color.White,
+                Padding = new Padding(10, 4, 10, 4),
+                Renderer = new ToolStripProfessionalRenderer(new TopNavColorTable())
+            };
+
+            var settings = CreateTopMenuItem("C\u00e0i \u0111\u1eb7t");
+            var uiSettings = CreateDropDownMenuItem("Giao di\u1ec7n...");
+            uiSettings.Click += Settings_Click;
+            settings.DropDownItems.Add(uiSettings);
+
+            var logout = CreateTopMenuItem("\u0110\u0103ng xu\u1ea5t");
+            logout.Alignment = ToolStripItemAlignment.Right;
+            logout.Click += Logout_Click;
+
+            var userText = string.IsNullOrEmpty(_user == null ? "" : _user.UserName)
+                ? (_user == null ? "" : _user.Email)
+                : _user.UserName;
+            if (!string.IsNullOrEmpty(userText))
+            {
+                var userInfo = new ToolStripLabel(userText)
+                {
+                    Alignment = ToolStripItemAlignment.Right,
+                    ForeColor = Color.FromArgb(214, 222, 235),
+                    Font = new Font("Segoe UI", Font.Size, FontStyle.Regular),
+                    Margin = new Padding(0, 4, 10, 4),
+                    Padding = new Padding(8, 0, 8, 0)
+                };
+                menu.Items.Add(userInfo);
+            }
+
+            menu.Items.Add(settings);
+            menu.Items.Add(logout);
+            MainMenuStrip = menu;
+            return menu;
+        }
+
+        private ToolStripMenuItem CreateTopMenuItem(string text)
+        {
+            return new ToolStripMenuItem(text)
+            {
+                ForeColor = Color.White,
+                BackColor = Color.Transparent,
+                Margin = new Padding(2, 2, 2, 2),
+                Padding = new Padding(12, 0, 12, 0),
+                AutoSize = true
+            };
+        }
+
+        private ToolStripMenuItem CreateDropDownMenuItem(string text)
+        {
+            return new ToolStripMenuItem(text)
+            {
+                ForeColor = Color.FromArgb(35, 48, 68),
+                BackColor = Color.White,
+                Padding = new Padding(10, 6, 22, 6)
+            };
+        }
+
+        private sealed class TopNavColorTable : ProfessionalColorTable
+        {
+            public override Color MenuItemSelected
+            {
+                get { return Color.FromArgb(54, 76, 108); }
+            }
+
+            public override Color MenuItemBorder
+            {
+                get { return Color.FromArgb(79, 108, 148); }
+            }
+
+            public override Color MenuItemSelectedGradientBegin
+            {
+                get { return Color.FromArgb(54, 76, 108); }
+            }
+
+            public override Color MenuItemSelectedGradientEnd
+            {
+                get { return Color.FromArgb(54, 76, 108); }
+            }
+
+            public override Color MenuItemPressedGradientBegin
+            {
+                get { return Color.FromArgb(54, 76, 108); }
+            }
+
+            public override Color MenuItemPressedGradientMiddle
+            {
+                get { return Color.FromArgb(54, 76, 108); }
+            }
+
+            public override Color MenuItemPressedGradientEnd
+            {
+                get { return Color.FromArgb(54, 76, 108); }
+            }
+
+            public override Color ToolStripDropDownBackground
+            {
+                get { return Color.White; }
+            }
+
+            public override Color ImageMarginGradientBegin
+            {
+                get { return Color.White; }
+            }
+
+            public override Color ImageMarginGradientMiddle
+            {
+                get { return Color.White; }
+            }
+
+            public override Color ImageMarginGradientEnd
+            {
+                get { return Color.White; }
+            }
+        }
+
+        private void Settings_Click(object sender, EventArgs e)
+        {
+            using (var form = new UiSettingsForm(_uiSettings))
+            {
+                if (form.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                _uiSettings = new UiSettings
+                {
+                    FontSize = UiSettings.ClampFontSize(form.SelectedFontSize),
+                    StartupWidthPercent = UiSettings.ClampWidthPercent(form.SelectedStartupWidthPercent)
+                };
+                UiSettings.Save(_uiSettings);
+
+                Font = new Font("Segoe UI", _uiSettings.FontSize, FontStyle.Regular);
+                Controls.Clear();
+                ApplyStartupBounds();
+                BuildUi();
+                LoadLookups();
+                LoadData();
+            }
+        }
+
+        private void ApplyStartupBounds()
+        {
+            var workingArea = Screen.PrimaryScreen.WorkingArea;
+            var widthPercent = UiSettings.ClampWidthPercent(_uiSettings == null ? UiSettings.DefaultStartupWidthPercent : _uiSettings.StartupWidthPercent);
+            if (widthPercent >= 100)
+            {
+                WindowState = FormWindowState.Maximized;
+                return;
+            }
+
+            var width = Math.Max(200, workingArea.Width * widthPercent / 100);
+            var height = Math.Max(520, Math.Min(workingArea.Height, workingArea.Height * 90 / 100));
+            WindowState = FormWindowState.Normal;
+            Size = new Size(width, height);
+            Location = new Point(
+                workingArea.Left + Math.Max(0, (workingArea.Width - width) / 2),
+                workingArea.Top + Math.Max(0, (workingArea.Height - height) / 2));
+        }
+
+        private int Scale(int value)
+        {
+            return Math.Max(value, (int)Math.Ceiling(value * Font.Size / UiSettings.DefaultFontSize));
+        }
         private ComboBox AddFilter(TableLayoutPanel top, string label, int column)
         {
             top.Controls.Add(new Label { Text = label, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft, Font = Font, AutoSize = false, Padding = new Padding(0, 0, 0, 4) }, column, 0);
-            var combo = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Font = Font, Height = 42, IntegralHeight = false };
+            var combo = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Font = Font, Height = Scale(42), IntegralHeight = false };
             top.Controls.Add(combo, column + 1, 0);
             return combo;
         }
 
         private void AddButton(FlowLayoutPanel panel, string text, EventHandler handler)
         {
-            var button = new Button { Text = text, Width = 126, Height = 44, Font = Font, Margin = new Padding(4), TextAlign = ContentAlignment.MiddleCenter };
+            var button = new Button { Text = text, Width = Scale(126), Height = Scale(44), Font = Font, Margin = new Padding(4), TextAlign = ContentAlignment.MiddleCenter };
             button.Click += handler;
             panel.Controls.Add(button);
         }

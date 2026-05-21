@@ -19,6 +19,7 @@ namespace BeTong.Forms
         private readonly ApplicationUserInfo _user; // changed to ApplicationUserInfo
         private readonly bool _isEdit;
         private readonly DateTime _baseTime;
+        private readonly UiSettings _uiSettings;
         private CapPhoiHieuChinh _entity;
 
         private readonly Dictionary<string, TextBox> _texts = new Dictionary<string, TextBox>();
@@ -46,15 +47,16 @@ namespace BeTong.Forms
             _isEdit = !(id == null || id.Trim().Length == 0);
             _entity = _isEdit ? _repository.GetById(id) : new CapPhoiHieuChinh();
             _baseTime = DateTime.Now;
+            _uiSettings = UiSettings.Load();
 
             Text = _isEdit ? "Cập nhật cấp phối hiệu chỉnh" : "Thêm cấp phối hiệu chỉnh";
             StartPosition = FormStartPosition.CenterParent;
 
             // Tăng cỡ chữ toàn cục cho form để dễ đọc (tăng lớn hơn)
-            Font = new Font("Segoe UI", 16F, FontStyle.Regular);
+            Font = new Font("Segoe UI", _uiSettings.FontSize, FontStyle.Regular);
 
             // Tăng kích thước form để phù hợp với font lớn hơn
-            Size = new Size(1120, 720);
+            Size = new Size(Scale(1120), Scale(720));
             MinimumSize = new Size(980, 620);
 
             BuildUi();
@@ -73,7 +75,7 @@ namespace BeTong.Forms
 
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             // tăng chiều cao footer
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 82F));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, Scale(82)));
 
             var tabs = new TabControl
             {
@@ -111,8 +113,8 @@ namespace BeTong.Forms
             var save = new Button
             {
                 Text = "Lưu",
-                Width = 160,
-                Height = 52,
+                Width = Scale(160),
+                Height = Scale(52),
                 Font = this.Font,
                 Margin = new Padding(6)
             };
@@ -122,8 +124,8 @@ namespace BeTong.Forms
             var cancel = new Button
             {
                 Text = "Hủy",
-                Width = 160,
-                Height = 52,
+                Width = Scale(160),
+                Height = Scale(52),
                 Font = this.Font,
                 Margin = new Padding(6)
             };
@@ -153,9 +155,9 @@ namespace BeTong.Forms
                 ColumnCount = 4,
                 Padding = new Padding(12)
             };
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, Scale(160)));
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, Scale(160)));
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
 
             AddCombo(panel, "CompanyId", "Chi nhánh");
@@ -217,8 +219,8 @@ namespace BeTong.Forms
             grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.34F));
 
             // Hai hàng, cho mỗi hàng một chiều cao phù hợp
-            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 112F));
-            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 112F));
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, Scale(112)));
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, Scale(112)));
 
             int index = 0;
             for (int r = 0; r < 2; r++)
@@ -239,7 +241,7 @@ namespace BeTong.Forms
                     {
                         Text = fieldName,
                         Dock = DockStyle.Top,
-                        Height = 34,
+                        Height = Scale(34),
                         TextAlign = ContentAlignment.MiddleLeft,
                         Font = new Font(this.Font.FontFamily, this.Font.Size, FontStyle.Regular)
                     };
@@ -251,8 +253,8 @@ namespace BeTong.Forms
                         Minimum = -1000000000,
                         ThousandsSeparator = false,
                         Dock = DockStyle.Top,
-                        Height = 52,
-                        Width = 260,
+                        Height = Scale(52),
+                        Width = Scale(260),
                         Font = new Font(this.Font.FontFamily, this.Font.Size, FontStyle.Regular)
                     };
 
@@ -289,7 +291,7 @@ namespace BeTong.Forms
         private void AddText(TableLayoutPanel panel, string name, string label)
         {
             AddLabel(panel, label);
-            var text = new TextBox { Dock = DockStyle.Fill, Width = 320, Font = this.Font };
+            var text = new TextBox { Dock = DockStyle.Fill, Width = Scale(320), Font = this.Font };
             _texts[name] = text;
             panel.Controls.Add(text);
         }
@@ -297,7 +299,7 @@ namespace BeTong.Forms
         private void AddCombo(TableLayoutPanel panel, string name, string label)
         {
             AddLabel(panel, label);
-            var combo = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Width = 320, Font = this.Font };
+            var combo = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Width = Scale(320), Font = this.Font };
             _combos[name] = combo;
             panel.Controls.Add(combo);
         }
@@ -320,7 +322,7 @@ namespace BeTong.Forms
                 Minimum = -1000000000,
                 DecimalPlaces = decimals,
                 ThousandsSeparator = false,
-                Width = 320,
+                Width = Scale(320),
                 Font = this.Font
             };
 
@@ -370,6 +372,11 @@ namespace BeTong.Forms
             {
                 // không để lỗi làm crash UI
             }
+        }
+
+        private int Scale(int value)
+        {
+            return Math.Max(value, (int)Math.Ceiling(value * Font.Size / UiSettings.DefaultFontSize));
         }
 
         private static void AddLabel(TableLayoutPanel panel, string text)
